@@ -2,6 +2,7 @@
 #include "Util.h"
 #include "App.h"
 #include "RenderManager.h"
+#include "RenderScence.h"
 
 class MainWindow : public App
 {
@@ -9,7 +10,6 @@ public:
 	MainWindow(HINSTANCE hInstance);
 	~MainWindow();
 
-	bool Init();
 	void OnResize();
 	void UpdateScene(float dt);
 	void * DrawScene();
@@ -19,7 +19,6 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-
-private:
+	RenderScence mRenderScence;
 	POINT mLastMousePos;
 };

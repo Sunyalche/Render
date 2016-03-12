@@ -54,4 +54,9 @@ struct Buffer
 	char * pMemAddr;
 };
 
+struct ConstBuffer
+{
+	RenderMath::Matrix4X4 modelToClip;
+};
+
 

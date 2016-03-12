@@ -21,6 +21,7 @@ namespace RenderMath
 		Vector4 & operator/=(const double k);
 
 		double DotProduct(const Vector4 & vector4) const;
+		Vector4 CrossProductXYZ(const Vector4 & vector4) const;
 		double GetLength() const;
 		void Normalize(double v0, double v1, double v2, double v3);
 		void Normalize();
@@ -61,7 +62,7 @@ namespace RenderMath
 			);
 		Matrix4X4(const Matrix4X4 & matrix4X4)
 			{ memcpy(m, matrix4X4.m, sizeof(m)); }
-
+		static Matrix4X4 IdentityMatrix();
 		Matrix4X4 & operator=(const Matrix4X4 & matrix4X4)
 			{ memcpy(m, matrix4X4.m, sizeof(m)); return *this;}
 		Matrix4X4 operator+(const Matrix4X4 & matrix4X4) const;
@@ -75,6 +76,10 @@ namespace RenderMath
 		friend Vector4 operator*(const Vector4 & vector4, const Matrix4X4 & matrix4X4);
 		friend Vector4 operator*(const Matrix4X4 & matrix4X4, const Vector4 & vector4);
 		friend Vector4 operator*=(Vector4 & vector4, const Matrix4X4 & matrix4X4);
+
+		static Matrix4X4 GetEulerRotation(const double heading, 
+										  const double pitch, 
+										  const double bank);
 
 		std::string ToString() const;
 		friend std::ostream & operator<<(std::ostream & os, const Matrix4X4 & matrix4X4);
@@ -113,6 +118,7 @@ namespace RenderMath
 			return floorInt;
 		}
 	}
+	Matrix4X4 GetCameraMatrix(Vector4 cameraPos, Vector4 targetPos, Vector4 upDir);
 	inline double GetSlopeXY(const double Ax, const double Ay, const double Bx, const double By)
 	{
 		return (Ax - Bx == 0.0f) ? FINITE : (Ay - By) / (Ax - Bx);

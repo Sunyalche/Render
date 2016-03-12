@@ -31,6 +31,9 @@ App::App(HINSTANCE hInstance)
 	// Windows messages to the object's window procedure through
 	// the global window procedure.
 	gApp = this;
+	if (!InitMainWindow()) {
+		// Do something
+	}
 }
 
 App::~App()
@@ -83,16 +86,9 @@ int App::Run()
 	return (int)msg.wParam;
 }
 
-bool App::Init()
-{
-	if (!InitMainWindow())
-		return false;
-	return true;
-}
 
 void App::OnResize()
 {
-
 }
 
 LRESULT App::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -43,14 +43,6 @@ void RenderManager::SetCamera(const double inZoomX,
 	nearDis = inNear;
 	farDis = inFar;
 
-	double A = (farDis + nearDis) / (farDis - nearDis);
-	double B = -2.0f * nearDis * farDis / (farDis - nearDis);
-	clipMatrix = Matrix4X4(
-		zoomX, 0.0f, 0.0f, 0.0f,
-		0.0f, zoomY, 0.0f, 0.0f,
-		0.0f, 0.0f, A, 1.0f,
-		0.0f, 0.0f, B, 0.0f
-		);
 	clipPlanes[PD_UP].d = clipPlanes[PD_DOWN].d = clipPlanes[PD_RIGHT].d = clipPlanes[PD_LEFT].d = 0.0f;
 	clipPlanes[PD_FAR].d = farDis; clipPlanes[PD_NEAR].d = nearDis;
 	
@@ -60,6 +52,18 @@ void RenderManager::SetCamera(const double inZoomX,
 	clipPlanes[PD_RIGHT].normal.Normalize(-zoomX, 0.0f, 1.0f, 0.0f);
 	clipPlanes[PD_FAR].normal.Normalize(0.0f, 0.0f, -1.0f, 0.0f);
 	clipPlanes[PD_NEAR].normal.Normalize(0.0f, 0.0f, 1.0f, 0.0f);
+}
+
+Matrix4X4 RenderManager::GetClipMatrix()
+{
+	double A = (farDis + nearDis) / (farDis - nearDis);
+	double B = -2.0f * nearDis * farDis / (farDis - nearDis);
+	return Matrix4X4(
+		zoomX, 0.0f, 0.0f, 0.0f,
+		0.0f, zoomY, 0.0f, 0.0f,
+		0.0f, 0.0f, A, 1.0f,
+		0.0f, 0.0f, B, 0.0f
+		);
 }
 
 void RenderManager::SetInVertexBuffer(const void * const pSource, const int vertexNum, size_t stride)
@@ -114,11 +118,6 @@ void RenderManager::DoClipping()
 {
 	ClearBuffer(clippedIndexBuffer);
 	int indexNum = indexBuffer.size();
-	int vertexNum = outVertexBuffer.size();
-	// project vertex into clipping space
-	for (int i = 0; i < vertexNum; i++) {
-		outVertexBuffer[i]->position *= clipMatrix;
-	}
 	// do clipping
 	IndexBuffer polyIndexBuffer;
 	for (int i = 0; i < indexNum; i += 3) {

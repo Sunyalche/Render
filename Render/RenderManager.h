@@ -35,6 +35,7 @@ public:
 				   const double inRadio, 
 				   const double inNear, 
 				   const double inFar);
+	RenderMath::Matrix4X4 GetClipMatrix();
 
 	// ==================== render pipeline ====================
 	void BeginRender();
@@ -80,6 +81,10 @@ public:
 	void ClearBuffer(Buffer & buffer);
 	void ClearBuffer(IndexBuffer & buffer);
 
+	// ==================== const buffer ====================
+	void SetConstBuffer(ConstBuffer * constBuffer) { this->pConstBuffer = constBuffer; };
+	ConstBuffer * pConstBuffer;
+
 	// ==================== vertex data ====================
 	Buffer inVertexBuffer;
 	Buffer outVertexBuffer;
@@ -96,9 +101,8 @@ public:
 	Pixel backgroundColor;
 	DepthBuffer depthBuffer;
 	ScreenBuffer screenBuffer;
-	// ==================== camera parameters ====================
+	// ==================== clip parameters ====================
 	double zoomX, zoomY, nearDis, farDis;
-	RenderMath::Matrix4X4 clipMatrix;
 	IndexBuffer clippedIndexBuffer;
 	Plane clipPlanes[6];
 private:

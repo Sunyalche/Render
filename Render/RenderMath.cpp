@@ -80,6 +80,17 @@ namespace RenderMath
 		v3 /= k;
 		return *this;
 	}
+	Vector4 Vector4::CrossProductXYZ(const Vector4 & vector4) const
+	{
+		Vector4 result;
+		const Vector4 & a = *this;
+		const Vector4 & b = vector4;
+		result.x = a.v1 * b.v2 - a.v2 * b.v1;
+		result.y = a.v2 * b.v0 - a.v0 * b.v2;
+		result.z = a.v0 * b.v1 - a.v1 * b.v0;
+		result.w = 0.0f;
+		return result;
+	}
 	double Vector4::DotProduct(const Vector4 & vector4) const
 	{
 		return v0 * vector4.v0 + v1 * vector4.v1 
@@ -132,6 +143,14 @@ namespace RenderMath
 		this->m10 = m10; this->m11 = m11; this->m12 = m12; this->m13 = m13;
 		this->m20 = m20; this->m21 = m21; this->m22 = m22; this->m23 = m23;
 		this->m30 = m30; this->m31 = m31; this->m32 = m32; this->m33 = m33;
+	}
+	 Matrix4X4 IdentityMatrix()
+	{
+		Matrix4X4 mat(1.0f, 0.0f, 0.0f, 0.0f,
+					  0.0f, 1.0f, 0.0f, 0.0f,
+					  0.0f, 0.0f, 1.0f, 0.0f,
+					  0.0f, 0.0f, 0.0f, 1.0f);
+		return mat;
 	}
 	Matrix4X4 Matrix4X4::operator+(const Matrix4X4 & matrix4X4) const
 	{
@@ -242,6 +261,21 @@ namespace RenderMath
 		vector4 = result;
 		return vector4;
 	}
+	Matrix4X4 Matrix4X4::GetEulerRotation(const double heading,
+									  const double pitch,
+									  const double bank)
+	{
+		double ch = cos(heading);
+		double sh = sin(heading);
+		double cp = cos(pitch);
+		double sp = sin(pitch);
+		double cb = cos(bank);
+		double sb = sin(bank);
+		return Matrix4X4( ch * cb + sh * sp * sb,  sb * cp, -sh * cb + ch * sp * sb,  0,
+						 -ch * sb + sh * sp * cb,  cb * cp,  sb * sh + ch * sp * cb,  0,
+						  sh * cp,                -sp,       ch * cp,                 0,
+						  0,                       0,        0,                       1);
+	}
 	std::string Matrix4X4::ToString() const
 	{
 		std::string str("{ ");
@@ -255,5 +289,20 @@ namespace RenderMath
 	{
 		os << matrix4X4.ToString().data() << std::endl;
 		return os;
+	}
+	Matrix4X4 GetCameraMatrix(Vector4 cameraPos, Vector4 targetPos, Vector4 upDir)
+	{
+		Vector4 w = targetPos - cameraPos;
+		w.Normalize();
+		Vector4 u = upDir.CrossProductXYZ(w);
+		u.Normalize();
+		Vector4 v = w.CrossProductXYZ(u);
+		Matrix4X4 cameraMatrix(
+			u.x, v.x, w.x, 0.0f,
+			u.y, v.y, w.y, 0.0f,
+			u.z, v.z, w.z, 0.0f,
+			-cameraPos.DotProduct(u), -cameraPos.DotProduct(v), -cameraPos.DotProduct(w), 1.0f
+			);
+		return cameraMatrix;
 	}
 } // end of namespace RenderMath

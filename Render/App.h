@@ -12,7 +12,6 @@ public:
 
 	int Run();
 
-	virtual bool Init();
 	virtual void OnResize();
 	virtual void UpdateScene(float dt) = 0;
 	virtual void * DrawScene() = 0;
@@ -24,9 +23,10 @@ public:
 	virtual void OnMouseMove(WPARAM btnState, int x, int y) { }
 
 protected:
-	bool InitMainWindow();
-
 	void CalculateFrameStats();
+
+private:
+	bool InitMainWindow();
 
 protected:
 	int mClientWidth;
